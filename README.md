@@ -1,6 +1,6 @@
-# Simple MapR-DB & OJAI Examples
+# MapR-DB & OJAI Tests
 
-This project contains examples of OJAI, the JSON API For MapR-DB.
+This project contains tests for OJAI, the JSON API For MapR-DB.
 
 
 ### Pre-requisites
@@ -31,16 +31,7 @@ mvn clean package
 and run the application using:
 
 ```
-mvn exec:java -Dexec.mainClass="com.mapr.db.samples.basic.Ex01SimpleCRUD"
+mvn exec:java -Dexec.mainClass="com.mapr.db.tests.TestJSONTablesCRUDOperations"
 ```
-
-
-## What to look?
-
-Look at the various methods of the `Ex01SimpleCRUD` class:
-
-* createDocuments() that shows different ways of creating documents
-* queryDocuments() that shows different ways of querying documents
-* updateDocuments() that shows different ways of updating documents
 
 
