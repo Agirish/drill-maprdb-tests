@@ -1,24 +1,12 @@
-# MapR-DB & OJAI Tests
+# Drill & MapR-DB Tests
 
-This project contains tests for OJAI, the JSON API For MapR-DB.
-
+This project contains Tests & Utils for Drill Integration with MapR-DB Document Database (JSON Tables).
 
 ### Pre-requisites
 
 * Java SDK 7 or newer
 * Maven 3
-* MapR-DB JSON Developer Preview VM
-
-In your MapR-DB environment change the permissions of the `apps` folder
-
-```
-ssh mapr@maprdemo
- 
-cd /mapr/demo.mapr.com/
-
-chmod 777 apps
-```
-
+* MapR-DB JSON Installation
 
 ## Usage
 
@@ -28,10 +16,8 @@ Clone the repository, then
 mvn clean package
 ```
 
-and run the application using:
+Sample run command:
 
 ```
-mvn exec:java -Dexec.mainClass="com.mapr.db.tests.TestJSONTablesCRUDOperations"
+mvn exec:java -Dexec.mainClass="com.mapr.db.tests.CreateJSONTable"
 ```
-
-
