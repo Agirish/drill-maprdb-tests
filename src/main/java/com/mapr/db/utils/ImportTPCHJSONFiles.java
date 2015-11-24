@@ -77,13 +77,13 @@ public class ImportTPCHJSONFiles {
     public Supplier s;
     public Region r;
 
-    public static int c_count = 0;
-    public static int l_count = 0;
-    public static int o_count = 0;
-    public static int p_count = 0;
-    public static int ps_count = 0;
-    public static int s_count = 0;
-    public static int r_count = 0;
+    public static long c_count = 0;
+    public static long l_count = 0;
+    public static long o_count = 0;
+    public static long p_count = 0;
+    public static long ps_count = 0;
+    public static long s_count = 0;
+    public static long r_count = 0;
 
     public ImportTPCHJSONFiles() {
     }
@@ -91,8 +91,8 @@ public class ImportTPCHJSONFiles {
     public static void main(String[] args) throws Exception {
 
         ImportTPCHJSONFiles reader = new ImportTPCHJSONFiles();
-        reader.readFileAndWriteToTable("CUSTOMER", CUSTOMER_JSON_FILE_PATH, CUSTOMER_JSON_TABLE_PATH);
-    //reader.readFileAndWriteToTable(LINEITEM_JSON_FILE_PATH, LINEITEM_JSON_TABLE_PATH);
+        //reader.readFileAndWriteToTable("CUSTOMER", CUSTOMER_JSON_TABLE_PATH, CUSTOMER_JSON_FILE_PATH);
+        reader.readFileAndWriteToTable("LINEITEM", LINEITEM_JSON_TABLE_PATH, LINEITEM_JSON_FILE_PATH);
         //reader.readFileAndWriteToTable(ORDERS_JSON_FILE_PATH, ORDERS_JSON_TABLE_PATH);
         //reader.readFileAndWriteToTable(PART_JSON_FILE_PATH, PART_JSON_TABLE_PATH);
         //reader.readFileAndWriteToTable(PARTSUPP_JSON_FILE_PATH, PARTSUPP_JSON_TABLE_PATH);
@@ -101,37 +101,47 @@ public class ImportTPCHJSONFiles {
 
     }
 
-    public void readFileAndWriteToTable(String tpchTable, String file, String table) {
+    public void readFileAndWriteToTable(String maprdbJsonTableName, String maprdbJsonTablePath, String jsonFilePath) {
+
 
         try {
-            Scanner scan = new Scanner(new File(file));
-            String jsonFile = "";
-            while (scan.hasNext()) {
-                jsonFile += scan.next();
+            Scanner scan = new Scanner(new FileReader(jsonFilePath));
+            StringBuilder jsonFileContents = new StringBuilder();
+            while (scan.hasNextLine()) {
+                jsonFileContents.append(scan.nextLine());
             }
-
-            StringTokenizer st = new StringTokenizer(jsonFile, "%");
+	    scan.close();
+            StringTokenizer st = new StringTokenizer(jsonFileContents.toString(), "%");
             String record = "";
 
             while (st.hasMoreTokens()) {
 
                 record = st.nextToken();
 		//System.out.println(record);
-
                 JSONParser parser = new JSONParser();
 
                 try {
                     Object obj = parser.parse(record);
                     JSONObject jsonObject = (JSONObject) obj;
 
-                    if (tpchTable.equalsIgnoreCase("Customer")) {
+                    if (maprdbJsonTableName.equalsIgnoreCase("Customer")) {
 
+			System.out.println("Importing "+maprdbJsonTableName);
                         c = new Customer();
                         c = c.getDocument(jsonObject);
-                        c_table = this.getTable(c_table, CUSTOMER_JSON_TABLE_PATH);
+			//System.out.println(c.toString());
+                        c_table = this.getTable(c_table, maprdbJsonTablePath);
                         c.insertDocument(c_table);
                     }
-
+		    else if (maprdbJsonTableName.equalsIgnoreCase("Lineitem")) {
+		
+			System.out.println("Importing "+maprdbJsonTableName);			
+			l = new Lineitem();
+			l = l.getDocument(jsonObject);
+			//System.out.println(l.toString());
+			l_table = this.getTable(l_table, maprdbJsonTablePath);
+			l.insertDocument(l_table);
+		    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -214,7 +224,7 @@ class Lineitem {
     Long l_partkey;
     Long l_suppkey;
     Long l_linenumber;
-    Double l_quantity;
+    Long l_quantity;
     Double l_extendedprice;
     Double l_discount;
     Double l_tax;
@@ -232,6 +242,52 @@ class Lineitem {
                 + l_extendedprice + "\n\t" + l_discount + "\n\t" + l_tax + "\n\t" + l_returnflag + "\n\t" + l_linestatus + "\n\t" + l_shipdate + "\n\t"
                 + l_commitdate + "\n\t" + l_receiptdate + "\n\t" + l_shipinstruct + "\n\t" + l_shipmode + "\n\t" + l_comment + "\n";
     }
+
+    public Lineitem getDocument(JSONObject jsonObject) {
+
+        this._id = (String) "" + ImportTPCHJSONFiles.l_count++;
+        this.l_orderkey = (Long) jsonObject.get("L_ORDERKEY");
+        this.l_partkey = (Long) jsonObject.get("L_PARTKEY");
+        this.l_suppkey = (Long) jsonObject.get("L_SUPPKEY");
+        this.l_linenumber = (Long) jsonObject.get("L_LINENUMBER");
+        this.l_quantity = (Long) jsonObject.get("L_QUANTITY");
+        this.l_extendedprice = (Double) jsonObject.get("L_EXTENDEDPRICE");
+        this.l_discount = (Double) jsonObject.get("L_DISCOUNT");
+        this.l_tax = (Double) jsonObject.get("L_TAX");
+	this.l_returnflag = (String) jsonObject.get("L_RETURNFLAG");
+	this.l_linestatus = (String) jsonObject.get("L_LINESTATUS");
+        this.l_shipdate = (String) jsonObject.get("L_SHIPDATE");
+        this.l_commitdate = (String) jsonObject.get("L_COMMITDATE");
+        this.l_receiptdate = (String) jsonObject.get("L_RECEIPTDATE");
+        this.l_shipinstruct = (String) jsonObject.get("L_SHIPINSTRUCT");
+        this.l_shipmode = (String) jsonObject.get("L_SHIPMODE");
+        this.l_comment = (String) jsonObject.get("L_COMMENT");
+
+        return this;
+    }
+
+    public void insertDocument(Table t) {
+        DBDocument document = MapRDB.newDocument()
+                .set("_id", this._id)
+                .set("L_ORDERKEY", this.l_orderkey)
+                .set("L_PARTKEY", this.l_partkey)
+                .set("L_SUPPKEY", this.l_suppkey)
+                .set("L_LINENUMBER", this.l_linenumber)
+                .set("L_QUANTITY", this.l_quantity)
+                .set("L_EXTENDEDPRICE", this.l_extendedprice)
+                .set("L_DISCOUNT", this.l_discount)
+                .set("L_TAX", this.l_tax)
+                .set("L_RETURNFLAG", this.l_returnflag)
+                .set("L_LINESTATUS", this.l_linestatus)
+                .set("L_SHIPDATE", this.l_shipdate)
+                .set("L_COMMITDATE", this.l_commitdate)
+                .set("L_RECEIPTDATE", this.l_receiptdate)
+                .set("L_SHIPINSTRUCT", this.l_shipinstruct)
+                .set("L_SHIPMODE", this.l_shipmode)
+                .set("L_COMMENT", this.l_comment);
+        t.insertOrReplace(document);
+    }
+
 }
 
 class Orders {
