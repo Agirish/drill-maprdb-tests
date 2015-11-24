@@ -1,0 +1,5 @@
+SELECT PS.PS_PARTKEY, COUNT(*) 
+  FROM lineitem L, 
+          partsupp PS 
+  WHERE L.L_PARTKEY = PS.PS_PARTKEY 
+GROUP BY PS.PS_PARTKEY;
