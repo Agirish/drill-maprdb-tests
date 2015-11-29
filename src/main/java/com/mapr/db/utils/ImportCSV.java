@@ -21,7 +21,7 @@ public class ImportCSV {
     static Logger logger = Logger.getLogger(ImportTPCHJSONFiles.class);
     static LinkedHashMap<String, String> schemaList = new LinkedHashMap<>();
     public static String schemaFile = "";
-    public static String csvFile = "";
+    public static String csvFile = "", delimiter = ",";
     public static String maprdbTablePath = "";
     public static Table maprdbTable = null;
     public static long idcounter = 0l;
@@ -31,17 +31,21 @@ public class ImportCSV {
 
     public static void main(String[] args) throws Exception {
 
-        if (args.length != 3){
+        if (args.length != 4) {
             System.out.println("MapR-DB JSON Tables - Import CSV\nUsage:\n"
                     + "\tParam 1: JSON Table Path (MapR-FS)\n"
                     + "\tParam 2: Text File Path (Local-FS)\n"
-                    + "\tParam 3: Schema File Path (Local-FS)\n");
+                    + "\tParam 3: Text File Delimiter (Local-FS)\n"
+                    + "\tParam 4: Schema File Path (Local-FS)\n");
+
             System.exit(-1);
         }
 
-        maprdbTablePath=args[0];
-        csvFile=args[1];
-        schemaFile =args[2];
+        maprdbTablePath = args[0];
+        csvFile = args[1];
+        delimiter = args[2];
+        schemaFile = args[3];
+
 
         BasicConfigurator.configure();
         Logger.getRootLogger().setLevel(Level.ERROR);
@@ -49,20 +53,23 @@ public class ImportCSV {
         ImportCSV imp = new ImportCSV();
 
         imp.readSchema(schemaFile);
-        imp.readAndImportCSV(csvFile);
+        imp.readAndImportCSV(csvFile, delimiter);
     }
 
     public void readSchema(String path) {
 
+        String schemaLine = "";
+        StringTokenizer st;
+        String column = "", datatype = "";
+        int countColumns = 0;
+
         try {
             Scanner scan = new Scanner(new FileReader(path));
-            String schemaLine;
-            StringTokenizer st;
-            String column = "", datatype = "";
-            int countColumns = 0;
 
             while (scan.hasNextLine()) {
-                schemaLine = scan.nextLine();
+                schemaLine = scan.nextLine().trim();
+                if (schemaLine.startsWith("#"))
+                    continue;
                 st = new StringTokenizer(schemaLine, " ");
                 while (st.hasMoreTokens()) {
                     column = st.nextToken();
@@ -74,7 +81,9 @@ public class ImportCSV {
             }
             scan.close();
         } catch (Exception e) {
+            System.out.println("Error reading schema: " + schemaLine + "\n(Column Name:" + column + "\tData type:" + datatype + ")");
             e.printStackTrace();
+            System.exit(-1);
         }
     }
 
@@ -85,21 +94,26 @@ public class ImportCSV {
         }
     }
 
-    public void readAndImportCSV(String path) {
+    public void readAndImportCSV(String path, String delimiter) {
+
+        String dataLine = "";
+        StringTokenizer st;
+        String data = "";
+
+        int count = 0;
 
         try {
             Scanner scan = new Scanner(new FileReader(path));
-            String dataLine;
-            StringTokenizer st;
-
-            int count = 0;
 
             while (scan.hasNextLine()) {
                 count = 0;
-                dataLine = scan.nextLine();
-                st = new StringTokenizer(dataLine, ",");
+                dataLine = scan.nextLine().trim();
+                st = new StringTokenizer(dataLine, delimiter);
                 while (st.hasMoreTokens()) {
-                    values.add(count, st.nextToken());
+                    data = st.nextToken();
+                    if (data.isEmpty())
+                        data = "";
+                    values.add(count, data);
                     //System.out.println(values.get(count));
                     count++;
                 }
@@ -107,7 +121,9 @@ public class ImportCSV {
             }
             scan.close();
         } catch (Exception e) {
+            System.out.println("Error importing text:\n\t" + dataLine + "\ninto\n\t" + maprdbTablePath);
             e.printStackTrace();
+            System.exit(-1);
         }
     }
 
@@ -123,7 +139,7 @@ public class ImportCSV {
 
     public void insertDocument(int count, Table table, String tablePath) {
 
-        System.out.println("Inserting " + count + " documents");
+        //System.out.println("Inserting " + count + " columns");
         try {
             Table t = getTable(table, tablePath);
             DBDocument document = MapRDB.newDocument();
