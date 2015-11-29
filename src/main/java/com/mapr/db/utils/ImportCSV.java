@@ -19,15 +19,18 @@ import org.apache.log4j.BasicConfigurator;
 public class ImportCSV {
 
     static Logger logger = Logger.getLogger(ImportTPCHJSONFiles.class);
-    static LinkedHashMap<String, String> schemaList = new LinkedHashMap<>();
-    public static String schemaFile = "";
-    public static String csvFile = "", delimiter = ",";
-    public static String maprdbTablePath = "";
-    public static Table maprdbTable = null;
-    public static long idcounter = 0l;
-    public static ArrayList<String> values = new ArrayList<>();
-    static ArrayList<String> valueTypes = new ArrayList<>();
-    static ArrayList<String> columnNames = new ArrayList<>();
+
+    private static LinkedHashMap<String, String> schemaList = new LinkedHashMap<>();
+    private static String schemaFile = "";
+    private static String csvFile = "", delimiter = ",";
+    private static String maprdbTablePath = "";
+    private static Table maprdbTable = null;
+    private static long idcounter = 0l;
+    private static int countColumnsInSchema = 0;
+    private static int countColumnsInData = 0;
+    private static ArrayList<String> values = new ArrayList<>();
+    private static ArrayList<String> valueTypes = new ArrayList<>();
+    private static ArrayList<String> columnNames = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
 
@@ -53,6 +56,7 @@ public class ImportCSV {
         ImportCSV imp = new ImportCSV();
 
         imp.readSchema(schemaFile);
+        //imp.printSchema(schemaList);
         imp.readAndImportCSV(csvFile, delimiter);
     }
 
@@ -61,7 +65,8 @@ public class ImportCSV {
         String schemaLine = "";
         StringTokenizer st;
         String column = "", datatype = "";
-        int countColumns = 0;
+
+        countColumnsInSchema = 0;
 
         try {
             Scanner scan = new Scanner(new FileReader(path));
@@ -75,9 +80,10 @@ public class ImportCSV {
                     column = st.nextToken();
                     datatype = st.nextToken();
                     schemaList.put(column, datatype);
-                    valueTypes.add(countColumns, datatype);
-                    columnNames.add(countColumns, column);
+                    valueTypes.add(countColumnsInSchema, datatype);
+                    columnNames.add(countColumnsInSchema, column);
                 }
+                countColumnsInSchema++;
             }
             scan.close();
         } catch (Exception e) {
@@ -87,7 +93,7 @@ public class ImportCSV {
         }
     }
 
-    public void printSchema() {
+    public void printSchema(LinkedHashMap<String, String> schemaList) {
 
         for (String columns : schemaList.keySet()) {
             System.out.println(columns + " " + schemaList.get(columns));
@@ -100,24 +106,22 @@ public class ImportCSV {
         StringTokenizer st;
         String data = "";
 
-        int count = 0;
-
         try {
             Scanner scan = new Scanner(new FileReader(path));
 
             while (scan.hasNextLine()) {
-                count = 0;
+                countColumnsInData = 0;
                 dataLine = scan.nextLine().trim();
                 st = new StringTokenizer(dataLine, delimiter);
                 while (st.hasMoreTokens()) {
                     data = st.nextToken();
                     if (data.isEmpty())
-                        data = "";
-                    values.add(count, data);
-                    //System.out.println(values.get(count));
-                    count++;
+                        data = "null";
+                    values.add(countColumnsInData, data);
+                    //System.out.println("Inserting " + values.get(countColumnsInData) + " into column " + columnNames.get(countColumnsInData));
+                    countColumnsInData++;
                 }
-                insertDocument(count, maprdbTable, maprdbTablePath);
+                insertDocument(maprdbTable, maprdbTablePath);
             }
             scan.close();
         } catch (Exception e) {
@@ -127,7 +131,7 @@ public class ImportCSV {
         }
     }
 
-    public Table getTable(Table table, String tablePath) throws IOException {
+    private Table getTable(Table table, String tablePath) throws IOException {
 
         if (!MapRDB.tableExists(tablePath)) {
             table = MapRDB.createTable(tablePath); // Create table if not exists
@@ -137,15 +141,19 @@ public class ImportCSV {
         return table;
     }
 
-    public void insertDocument(int count, Table table, String tablePath) {
+    private void insertDocument(Table table, String tablePath) {
 
-        //System.out.println("Inserting " + count + " columns");
+        if (countColumnsInData != countColumnsInSchema) {
+            System.out.println("Provided schema cannot be used to import the text data. " +
+                    "\nThe number of columns in schema (" + countColumnsInSchema + ") does not match columns in data (" + countColumnsInData + ")");
+            System.exit(-1);
+        }
         try {
             Table t = getTable(table, tablePath);
             DBDocument document = MapRDB.newDocument();
             document.set("_id", getNextID());
-            for (int i = 0; i < count; i++) {
-                System.out.println(columnNames.get(i) + " | " + values.get(i));
+            for (int i = 0; i < countColumnsInData; i++) {
+                //System.out.println(columnNames.get(i) + " | " + values.get(i));
                 document.set(columnNames.get(i), values.get(i));
             }
             t.insertOrReplace(document);
@@ -154,9 +162,9 @@ public class ImportCSV {
         }
     }
 
-    public String getNextID() {
+    private String getNextID() {
         idcounter++;
-        System.out.println("\nDocument ID: " + idcounter);
+        //System.out.println("\nDocument ID: " + idcounter);
         return "" + idcounter;
     }
 
