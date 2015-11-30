@@ -1,0 +1,4 @@
+##REASON
+ R_REASON_SK Integer
+ R_REASON_ID String
+ R_REASON_DESC String

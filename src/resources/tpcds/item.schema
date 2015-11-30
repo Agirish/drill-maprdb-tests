@@ -1,0 +1,23 @@
+##ITEM
+ I_ITEM_SK Integer
+ I_ITEM_ID String
+ I_REC_START_DATE Date
+ I_REC_END_DATE Date
+ I_ITEM_DESC String
+ I_CURRENT_PRICE Double
+ I_WHOLESALE_COST Double
+ I_BRAND_ID Integer
+ I_BRAND String
+ I_CLASS_ID Integer
+ I_CLASS String
+ I_CATEGORY_ID Integer
+ I_CATEGORY String
+ I_MANUFACT_ID Integer
+ I_MANUFACT String
+ I_SIZE String
+ I_FORMULATION String
+ I_COLOR String
+ I_UNITS String
+ I_CONTAINER String
+ I_MANAGER_ID Integer
+ I_PRODUCT_NAME String

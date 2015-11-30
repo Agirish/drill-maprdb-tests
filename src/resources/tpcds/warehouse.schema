@@ -1,0 +1,15 @@
+##WAREHOUSE
+ W_WAREHOUSE_SK Integer
+ W_WAREHOUSE_ID String
+ W_WAREHOUSE_NAME String
+ W_WAREHOUSE_SQ_FT Integer
+ W_STREET_NUMBER String
+ W_STREET_NAME String
+ W_STREET_TYPE String
+ W_SUITE_NUMBER String
+ W_CITY String
+ W_COUNTY String
+ W_STATE String
+ W_ZIP String
+ W_COUNTRY String
+ W_GMT_OFFSET Double

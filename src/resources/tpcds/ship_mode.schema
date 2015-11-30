@@ -1,0 +1,7 @@
+##SHIP_MODE
+ SM_SHIP_MODE_SK Integer
+ SM_SHIP_MODE_ID String
+ SM_TYPE String 
+ SM_CODE String
+ SM_CARRIER String
+ SM_CONTRACT String

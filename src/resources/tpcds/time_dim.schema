@@ -1,0 +1,11 @@
+##TIME_DIM
+ T_TIME_SK Integer
+ T_TIME_ID String
+ T_TIME Integer
+ T_HOUR Integer
+ T_MINUTE Integer
+ T_SECOND Integer
+ T_AM_PM String
+ T_SHIFT String
+ T_SUB_SHIFT String
+ T_MEAL_TIME String
