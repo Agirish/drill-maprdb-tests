@@ -1,0 +1,10 @@
+##PART 
+     P_PARTKEY Integer
+     P_NAME String
+     P_MFGR String
+     P_BRAND String
+     P_TYPE String
+     P_SIZE Integer
+     P_CONTAINER String
+     P_RETAILPRICE Double
+     P_COMMENT String

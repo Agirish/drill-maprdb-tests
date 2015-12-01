@@ -1,0 +1,77 @@
+##REGION 
+     R_REGIONKEY Integer
+     R_NAME String 
+     R_COMMENT String
+
+##NATION  
+     N_NATIONKEY Integer
+     N_NAME String
+     N_REGIONKEY Integer
+     N_COMMENT String
+
+##PART 
+     P_PARTKEY Integer
+     P_NAME String
+     P_MFGR String
+     P_BRAND String
+     P_TYPE String
+     P_SIZE Integer
+     P_CONTAINER String
+     P_RETAILPRICE Double
+     P_COMMENT String
+
+##SUPPLIER 
+     S_SUPPKEY Integer
+     S_NAME String
+     S_ADDRESS String
+     S_NATIONKEY Integer
+     S_PHONE String
+     S_ACCTBAL Double
+     S_COMMENT String
+
+##PARTSUPP 
+     PS_PARTKEY Integer
+     PS_SUPPKEY Integer
+     PS_AVAILQTY Integer
+     PS_SUPPLYCOST Double
+     PS_COMMENT String
+
+##CUSTOMER 
+     C_CUSTKEY Integer
+     C_NAME String
+     C_ADDRESS String
+     C_NATIONKEY Integer
+     C_PHONE String
+     C_ACCTBAL Double
+     C_MKTSEGMENT String
+     C_COMMENT String
+
+##ORDERS 
+     O_ORDERKEY Integer
+     O_CUSTKEY Integer
+     O_ORDERSTATUS String
+     O_TOTALPRICE Double
+     O_ORDERDate Date
+     O_ORDERPRIORITY String
+     O_CLERK String
+     O_SHIPPRIORITY Integer
+     O_COMMENT String
+
+##LINEITEM 
+     L_ORDERKEY Integer
+     L_PARTKEY Integer
+     L_SUPPKEY Integer
+     L_LINENUMBER Integer
+     L_QUANTITY Double
+     L_EXTENDEDPRICE Double
+     L_DISCOUNT Double
+     L_TAX Double
+     L_RETURNFLAG String
+     L_LINESTATUS String
+     L_SHIPDate Date
+     L_COMMITDate Date
+     L_RECEIPTDate Date
+     L_SHIPINSTRUCT String
+     L_SHIPMODE String
+     L_COMMENT String
+

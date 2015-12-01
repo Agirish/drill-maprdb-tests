@@ -1,0 +1,5 @@
+##NATION  
+     N_NATIONKEY Integer
+     N_NAME String
+     N_REGIONKEY Integer
+     N_COMMENT String

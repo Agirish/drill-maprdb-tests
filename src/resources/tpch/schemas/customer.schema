@@ -1,0 +1,9 @@
+##CUSTOMER 
+     C_CUSTKEY Integer
+     C_NAME String
+     C_ADDRESS String
+     C_NATIONKEY Integer
+     C_PHONE String
+     C_ACCTBAL Double
+     C_MKTSEGMENT String
+     C_COMMENT String

@@ -1,0 +1,4 @@
+##REGION 
+     R_REGIONKEY Integer
+     R_NAME String 
+     R_COMMENT String

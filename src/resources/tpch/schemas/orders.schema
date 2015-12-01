@@ -1,0 +1,10 @@
+##ORDERS 
+     O_ORDERKEY Integer
+     O_CUSTKEY Integer
+     O_ORDERSTATUS String
+     O_TOTALPRICE Double
+     O_ORDERDate Date
+     O_ORDERPRIORITY String
+     O_CLERK String
+     O_SHIPPRIORITY Integer
+     O_COMMENT String

@@ -1,0 +1,17 @@
+##LINEITEM 
+     L_ORDERKEY Integer
+     L_PARTKEY Integer
+     L_SUPPKEY Integer
+     L_LINENUMBER Integer
+     L_QUANTITY Double
+     L_EXTENDEDPRICE Double
+     L_DISCOUNT Double
+     L_TAX Double
+     L_RETURNFLAG String
+     L_LINESTATUS String
+     L_SHIPDate Date
+     L_COMMITDate Date
+     L_RECEIPTDate Date
+     L_SHIPINSTRUCT String
+     L_SHIPMODE String
+     L_COMMENT String

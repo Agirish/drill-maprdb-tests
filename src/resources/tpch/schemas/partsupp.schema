@@ -1,0 +1,6 @@
+##PARTSUPP 
+     PS_PARTKEY Integer
+     PS_SUPPKEY Integer
+     PS_AVAILQTY Integer
+     PS_SUPPLYCOST Double
+     PS_COMMENT String

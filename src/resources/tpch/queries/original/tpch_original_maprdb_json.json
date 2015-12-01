@@ -1,0 +1,21 @@
+{
+    "testId": "tpch_maprdb_json",
+    "type": "group",
+    "description": "Test TPC-H Original Queries on MapR-DB JSON Tables",
+    "categories": [
+        "smoke"
+    ],
+    "matrices": [
+        {
+            "query-file": ".*.q",
+            "schema": "dfs.tpch_maprdb",
+            "output-format": "tsv",
+            "expected-file": ".*.e_tsv",
+            "verification-type": [
+                "in-memory"
+            ]
+        }
+    ],
+    "datasources": [
+    ]
+}

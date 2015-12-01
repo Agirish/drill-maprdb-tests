@@ -20,17 +20,17 @@ public class ImportCSV {
 
     static Logger logger = Logger.getLogger(ImportTPCHJSONFiles.class);
 
-    private static LinkedHashMap<String, String> schemaList = new LinkedHashMap<>();
     private static String schemaFile = "";
-    private static String csvFile = "", delimiter = ",";
+    private static String csvFile = "";
+    private static String delimiter = ",";
     private static String maprdbTablePath = "";
     private static Table maprdbTable = null;
+
     private static long idcounter = 0l;
+
     private static int countColumnsInSchema = 0;
-    private static int countColumnsInData = 0;
-    private static ArrayList<Object> values = new ArrayList<>();
-    private static ArrayList<String> valueTypes = new ArrayList<>();
-    private static ArrayList<String> columnNames = new ArrayList<>();
+    private static ArrayList<String> valueTypesInSchema = new ArrayList<>();
+    private static ArrayList<String> columnNamesInSchema = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
 
@@ -55,10 +55,11 @@ public class ImportCSV {
         ImportCSV imp = new ImportCSV();
 
         imp.readSchema(schemaFile);
-        imp.printSchema(schemaList);
+        imp.printSchema();
         imp.readAndImportCSV(csvFile, delimiter);
 
-        System.out.println("Successfully inserted " + idcounter + " documents from " + csvFile + " into " + maprdbTablePath);
+        System.out.println("Successfully inserted " + idcounter + " documents from "
+                + csvFile + " into " + maprdbTablePath);
     }
 
     public void readSchema(String path) {
@@ -80,9 +81,8 @@ public class ImportCSV {
                 while (st.hasMoreTokens()) {
                     column = st.nextToken();
                     datatype = st.nextToken();
-                    schemaList.put(column, datatype);
-                    valueTypes.add(countColumnsInSchema, datatype);
-                    columnNames.add(countColumnsInSchema, column);
+                    valueTypesInSchema.add(countColumnsInSchema, datatype);
+                    columnNamesInSchema.add(countColumnsInSchema, column);
                 }
                 countColumnsInSchema++;
             }
@@ -95,11 +95,11 @@ public class ImportCSV {
         }
     }
 
-    public void printSchema(LinkedHashMap<String, String> schemaList) {
+    public void printSchema() {
 
         System.out.println("Schema:");
-        for (String columns : schemaList.keySet()) {
-            System.out.println(columns + " " + schemaList.get(columns));
+        for (int i = 0; i < valueTypesInSchema.size(); i++) {
+            System.out.println(columnNamesInSchema.get(i) + " " + valueTypesInSchema.get(i));
         }
     }
 
@@ -109,12 +109,16 @@ public class ImportCSV {
         String[] dataList;
         String data = "";
 
+        ArrayList<Object> values = new ArrayList<>();
+        int countColumnsInData = 0;
+
         try {
             Scanner scan = new Scanner(new FileReader(path));
 
             while (scan.hasNextLine()) {
                 countColumnsInData = 0;
                 dataLine = scan.nextLine().trim();
+                //System.out.println(dataLine);
                 if (dataLine.endsWith(delimiter)) {
                     dataLine = dataLine.substring(0, dataLine.length() - 1);
                 }
@@ -124,16 +128,14 @@ public class ImportCSV {
 
                     data = dataList[i];
                     if (data.isEmpty()) {
-                        if (valueTypes.get(i) == "String") {
+                        if (valueTypesInSchema.get(i) == "String") {
                             data = "null";
                         } else {
                             data = "0";
                         }
                     }
 
-                    values.add(countColumnsInData, data);
-
-                    switch (valueTypes.get(i).toLowerCase()) {
+                    switch (valueTypesInSchema.get(i).toLowerCase()) {
                         case "int":
                         case "integer":
                         case "bigint":
@@ -153,11 +155,11 @@ public class ImportCSV {
                     }
 
                     //System.out.println("Inserting " + values.get(countColumnsInData)
-                    //+" into column " + columnNames.get(countColumnsInData));
+                    //+" into column " + columnNamesInSchema.get(countColumnsInData));
 
                     countColumnsInData++;
                 }
-                insertDocument(maprdbTable, maprdbTablePath);
+                insertDocument(values, countColumnsInData, maprdbTable, maprdbTablePath);
             }
             scan.close();
         } catch (Exception e) {
@@ -177,7 +179,7 @@ public class ImportCSV {
         return table;
     }
 
-    private void insertDocument(Table table, String tablePath) {
+    private void insertDocument(ArrayList<Object> values, int countColumnsInData, Table table, String tablePath) {
 
         if (countColumnsInData != countColumnsInSchema) {
             System.out.println("Provided schema cannot be used to import the text data. " +
@@ -193,24 +195,25 @@ public class ImportCSV {
 
             for (int i = 0; i < countColumnsInData; i++) {
 
-                //System.out.println(columnNames.get(i) + " | " + values.get(i) + " | " + valueTypes.get(i));
+                //System.out.println(id+": "+columnNamesInSchema.get(i) + " | " + values.get(i) 
+                // + " | " + valueTypesInSchema.get(i));
 
-                switch (valueTypes.get(i).toLowerCase()) {
+                switch (valueTypesInSchema.get(i).toLowerCase()) {
                     case "int":
                     case "integer":
                     case "bigint":
                     case "long":
-                        document.set(columnNames.get(i), (Long) values.get(i));
+                        document.set(columnNamesInSchema.get(i), (Long) values.get(i));
                         break;
                     case "float":
                     case "double":
-                        document.set(columnNames.get(i), (Double) values.get(i));
+                        document.set(columnNamesInSchema.get(i), (Double) values.get(i));
                         break;
                     case "date":
-                        document.set(columnNames.get(i), (Date) values.get(i));
+                        document.set(columnNamesInSchema.get(i), (Date) values.get(i));
                         break;
                     default:
-                        document.set(columnNames.get(i), (String) values.get(i));
+                        document.set(columnNamesInSchema.get(i), (String) values.get(i));
                         break;
                 }
             }
