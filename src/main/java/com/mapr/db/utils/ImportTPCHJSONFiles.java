@@ -16,30 +16,18 @@
  */
 package com.mapr.db.utils;
 
-import com.mapr.db.Condition;
 import com.mapr.db.MapRDB;
 import com.mapr.db.DBDocument;
-import com.mapr.db.Mutation;
 import com.mapr.db.Table;
-import com.mapr.db.exceptions.DocumentExistsException;
-import com.mapr.db.samples.basic.model.User;
-import org.ojai.DocumentStream;
 
-import javax.print.Doc;
 import java.io.IOException;
-import java.sql.Date;
-import java.util.Arrays;
-import java.util.Iterator;
 
 import java.io.FileReader;
-import java.io.File;
-import java.util.Iterator;
 
 import java.util.StringTokenizer;
 
 import java.util.Scanner;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -49,14 +37,14 @@ import org.apache.log4j.BasicConfigurator;
 
 public class ImportTPCHJSONFiles {
 
-    public static final String CUSTOMER_JSON_TABLE_PATH = "/maprdb/json/tpch/customer";
-    public static final String LINEITEM_JSON_TABLE_PATH = "/maprdb/json/tpch/lineitem";
-    public static final String ORDERS_JSON_TABLE_PATH = "/maprdb/json/tpch/orders";
-    public static final String PART_JSON_TABLE_PATH = "/maprdb/json/tpch/part";
-    public static final String PARTSUPP_JSON_TABLE_PATH = "/maprdb/json/tpch/partsupp";
-    public static final String NATION_JSON_TABLE_PATH = "/maprdb/json/tpch/nation";
-    public static final String SUPPLIER_JSON_TABLE_PATH = "/maprdb/json/tpch/supplier";
-    public static final String REGION_JSON_TABLE_PATH = "/maprdb/json/tpch/region";
+    public static final String CUSTOMER_JSON_TABLE_PATH = "/maprdb/json/tpch/sf0.01/customer";
+    public static final String LINEITEM_JSON_TABLE_PATH = "/maprdb/json/tpch/sf0.01/lineitem";
+    public static final String ORDERS_JSON_TABLE_PATH = "/maprdb/json/tpch/sf0.01/orders";
+    public static final String PART_JSON_TABLE_PATH = "/maprdb/json/tpch/sf0.01/part";
+    public static final String PARTSUPP_JSON_TABLE_PATH = "/maprdb/json/tpch/sf0.01/partsupp";
+    public static final String NATION_JSON_TABLE_PATH = "/maprdb/json/tpch/sf0.01/nation";
+    public static final String SUPPLIER_JSON_TABLE_PATH = "/maprdb/json/tpch/sf0.01/supplier";
+    public static final String REGION_JSON_TABLE_PATH = "/maprdb/json/tpch/sf0.01/region";
 
     public static final String CUSTOMER_JSON_FILE_PATH = "/root/tpch/customer.json";
     public static final String LINEITEM_JSON_FILE_PATH = "/root/tpch/lineitem.json";
@@ -101,8 +89,8 @@ public class ImportTPCHJSONFiles {
 
     public static void main(String[] args) throws Exception {
 
-	BasicConfigurator.configure();
-	Logger.getRootLogger().setLevel(Level.ERROR);
+        BasicConfigurator.configure();
+        Logger.getRootLogger().setLevel(Level.ERROR);
 
         ImportTPCHJSONFiles reader = new ImportTPCHJSONFiles();
         reader.readFileAndWriteToTable("CUSTOMER", CUSTOMER_JSON_TABLE_PATH, CUSTOMER_JSON_FILE_PATH);
@@ -119,7 +107,7 @@ public class ImportTPCHJSONFiles {
     public void readFileAndWriteToTable(String maprdbJsonTableName, String maprdbJsonTablePath, String jsonFilePath) {
 
 
-	System.out.println("Importing "+maprdbJsonTableName);
+        System.out.println("Importing " + maprdbJsonTableName);
 
         try {
             Scanner scan = new Scanner(new FileReader(jsonFilePath));
@@ -127,14 +115,14 @@ public class ImportTPCHJSONFiles {
             while (scan.hasNextLine()) {
                 jsonFileContents.append(scan.nextLine());
             }
-	    scan.close();
+            scan.close();
             StringTokenizer st = new StringTokenizer(jsonFileContents.toString(), "%");
             String record = "";
 
             while (st.hasMoreTokens()) {
 
                 record = st.nextToken();
-		//System.out.println(record);
+                //System.out.println(record);
                 JSONParser parser = new JSONParser();
 
                 try {
@@ -145,59 +133,52 @@ public class ImportTPCHJSONFiles {
 
                         c = new Customer();
                         c = c.getDocument(jsonObject);
-			//System.out.println(c.toString());
+                        //System.out.println(c.toString());
                         c_table = this.getTable(c_table, maprdbJsonTablePath);
                         c.insertDocument(c_table);
-                    }
-		    else if (maprdbJsonTableName.equalsIgnoreCase("Lineitem")) {
-		
-			l = new Lineitem();
-			l = l.getDocument(jsonObject);
-			//System.out.println(l.toString());
-			l_table = this.getTable(l_table, maprdbJsonTablePath);
-			l.insertDocument(l_table);
-		    }
-                    else if (maprdbJsonTableName.equalsIgnoreCase("Orders")) {
+                    } else if (maprdbJsonTableName.equalsIgnoreCase("Lineitem")) {
+
+                        l = new Lineitem();
+                        l = l.getDocument(jsonObject);
+                        //System.out.println(l.toString());
+                        l_table = this.getTable(l_table, maprdbJsonTablePath);
+                        l.insertDocument(l_table);
+                    } else if (maprdbJsonTableName.equalsIgnoreCase("Orders")) {
 
                         o = new Orders();
                         o = o.getDocument(jsonObject);
                         //System.out.println(o.toString());
                         o_table = this.getTable(o_table, maprdbJsonTablePath);
                         o.insertDocument(o_table);
-                    }
-                    else if (maprdbJsonTableName.equalsIgnoreCase("Part")) {
+                    } else if (maprdbJsonTableName.equalsIgnoreCase("Part")) {
 
                         p = new Part();
                         p = p.getDocument(jsonObject);
                         //System.out.println(p.toString());
                         p_table = this.getTable(p_table, maprdbJsonTablePath);
                         p.insertDocument(p_table);
-                    }
-                    else if (maprdbJsonTableName.equalsIgnoreCase("Partsupp")) {
+                    } else if (maprdbJsonTableName.equalsIgnoreCase("Partsupp")) {
 
                         ps = new Partsupp();
                         ps = ps.getDocument(jsonObject);
                         //System.out.println(ps.toString());
                         ps_table = this.getTable(ps_table, maprdbJsonTablePath);
                         ps.insertDocument(ps_table);
-                    }
-                    else if (maprdbJsonTableName.equalsIgnoreCase("Nation")) {
+                    } else if (maprdbJsonTableName.equalsIgnoreCase("Nation")) {
 
                         n = new Nation();
                         n = n.getDocument(jsonObject);
                         //System.out.println(n.toString());
                         n_table = this.getTable(n_table, maprdbJsonTablePath);
                         n.insertDocument(n_table);
-                    }
-                    else if (maprdbJsonTableName.equalsIgnoreCase("Supplier")) {
+                    } else if (maprdbJsonTableName.equalsIgnoreCase("Supplier")) {
 
                         s = new Supplier();
                         s = s.getDocument(jsonObject);
                         //System.out.println(s.toString());
                         s_table = this.getTable(s_table, maprdbJsonTablePath);
                         s.insertDocument(s_table);
-                    }
-                    else if (maprdbJsonTableName.equalsIgnoreCase("Region")) {
+                    } else if (maprdbJsonTableName.equalsIgnoreCase("Region")) {
 
                         r = new Region();
                         r = r.getDocument(jsonObject);
@@ -212,34 +193,34 @@ public class ImportTPCHJSONFiles {
         } catch (Exception e) {
             e.printStackTrace();
         }
-	
-	switch (maprdbJsonTableName){
 
-		case "CUSTOMER": 
-			System.out.println("Imported "+c_count+" Records\n");
-			break;
-		case "LINEITEM":
-			System.out.println("Imported "+l_count+" Records\n");
-                        break;
-                case "ORDERS":
-			System.out.println("Imported "+o_count+" Records\n");
-                        break;
-                case "PART":
-			System.out.println("Imported "+p_count+" Records\n");
-                        break;
-                case "PARTSUPP":
-			System.out.println("Imported "+ps_count+" Records\n");
-                        break;
-                case "NATION":
-                        System.out.println("Imported "+n_count+" Records\n");
-                        break;
-                case "SUPPLIER":
-                        System.out.println("Imported "+s_count+" Records\n");
-                        break;
-		case "REGION":
-                        System.out.println("Imported "+r_count+" Records\n");
-                        break;	       
-	}
+        switch (maprdbJsonTableName) {
+
+            case "CUSTOMER":
+                System.out.println("Imported " + c_count + " Records\n");
+                break;
+            case "LINEITEM":
+                System.out.println("Imported " + l_count + " Records\n");
+                break;
+            case "ORDERS":
+                System.out.println("Imported " + o_count + " Records\n");
+                break;
+            case "PART":
+                System.out.println("Imported " + p_count + " Records\n");
+                break;
+            case "PARTSUPP":
+                System.out.println("Imported " + ps_count + " Records\n");
+                break;
+            case "NATION":
+                System.out.println("Imported " + n_count + " Records\n");
+                break;
+            case "SUPPLIER":
+                System.out.println("Imported " + s_count + " Records\n");
+                break;
+            case "REGION":
+                System.out.println("Imported " + r_count + " Records\n");
+                break;
+        }
     }
 
     public Table getTable(Table table, String tableName) throws IOException {
@@ -344,8 +325,8 @@ class Lineitem {
         this.l_extendedprice = (Double) jsonObject.get("L_EXTENDEDPRICE");
         this.l_discount = (Double) jsonObject.get("L_DISCOUNT");
         this.l_tax = (Double) jsonObject.get("L_TAX");
-	this.l_returnflag = (String) jsonObject.get("L_RETURNFLAG");
-	this.l_linestatus = (String) jsonObject.get("L_LINESTATUS");
+        this.l_returnflag = (String) jsonObject.get("L_RETURNFLAG");
+        this.l_linestatus = (String) jsonObject.get("L_LINESTATUS");
         this.l_shipdate = (String) jsonObject.get("L_SHIPDATE");
         this.l_commitdate = (String) jsonObject.get("L_COMMITDATE");
         this.l_receiptdate = (String) jsonObject.get("L_RECEIPTDATE");
@@ -399,7 +380,7 @@ class Orders {
     }
 
     public Orders getDocument(JSONObject jsonObject) {
-        
+
         this._id = (String) "" + ImportTPCHJSONFiles.o_count++;
         this.o_orderkey = (Long) jsonObject.get("O_ORDERKEY");
         this.o_custkey = (Long) jsonObject.get("O_CUSTKEY");
@@ -409,9 +390,9 @@ class Orders {
         this.o_orderpriority = (String) jsonObject.get("O_ORDERPRIORITY");
         this.o_clerk = (String) jsonObject.get("O_CLERK");
         this.o_shippriority = (String) jsonObject.get("O_SHIPPRIORITY");
-	this.o_comment = (String) jsonObject.get("O_COMMENT");	
+        this.o_comment = (String) jsonObject.get("O_COMMENT");
 
-	return this;
+        return this;
     }
 
     public void insertDocument(Table t) {
@@ -425,8 +406,8 @@ class Orders {
                 .set("O_ORDERPRIORITY", this.o_orderpriority)
                 .set("O_CLERK", this.o_clerk)
                 .set("O_SHIPPRIORITY", this.o_shippriority)
-		.set("O_COMMENT", this.o_comment);
-	t.insertOrReplace(document);
+                .set("O_COMMENT", this.o_comment);
+        t.insertOrReplace(document);
     }
 }
 
@@ -625,4 +606,3 @@ class Region {
         t.insertOrReplace(document);
     }
 }
-

@@ -1,3 +1,19 @@
+/*
+ *  Copyright 2009-2015 MapR Technologies
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
 package com.mapr.db.utils;
 
 import com.mapr.db.MapRDB;
@@ -35,7 +51,8 @@ public class ImportCSV {
     public static void main(String[] args) throws Exception {
 
         if (args.length != 4) {
-            System.out.println("MapR-DB JSON Tables - Import CSV\nUsage:\n"
+            System.out.println("MapR-DB JSON Tables - Import CSV"
+                    + "\nUsage:\n"
                     + "\tParam 1: JSON Table Path (MapR-FS)\n"
                     + "\tParam 2: Text File Path (Local-FS)\n"
                     + "\tParam 3: Text File Delimiter (Local-FS)\n"
@@ -195,7 +212,7 @@ public class ImportCSV {
 
             for (int i = 0; i < countColumnsInData; i++) {
 
-                //System.out.println(id+": "+columnNamesInSchema.get(i) + " | " + values.get(i) 
+                //System.out.println(id+": "+columnNamesInSchema.get(i) + " | " + values.get(i)
                 // + " | " + valueTypesInSchema.get(i));
 
                 switch (valueTypesInSchema.get(i).toLowerCase()) {
