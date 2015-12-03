@@ -212,8 +212,8 @@ public class ImportCSV {
 
             for (int i = 0; i < countColumnsInData; i++) {
 
-                //System.out.println(id+": "+columnNamesInSchema.get(i) + " | " + values.get(i)
-                // + " | " + valueTypesInSchema.get(i));
+                //System.out.println(columnNamesInSchema.get(i) + " | " + values.get(i)
+                 //+ " | " + valueTypesInSchema.get(i));
 
                 switch (valueTypesInSchema.get(i).toLowerCase()) {
                     case "int":
@@ -234,10 +234,11 @@ public class ImportCSV {
                         break;
                 }
             }
+            //t.insert(document); // Bug?
             t.insertOrReplace(document);
         } catch (Exception e) {
             e.printStackTrace();
-            System.exit(-1);
+            //System.exit(-1);
         }
     }
 
