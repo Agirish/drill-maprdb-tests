@@ -172,7 +172,7 @@ public class ImportCSV {
                     }
 
                     //System.out.println("Inserting " + values.get(countColumnsInData)
-                    //+" into column " + columnNamesInSchema.get(countColumnsInData));
+                    //        + " into column " + columnNamesInSchema.get(countColumnsInData));
 
                     countColumnsInData++;
                 }
@@ -208,12 +208,12 @@ public class ImportCSV {
 
             Table t = getTable(table, tablePath);
             DBDocument document = MapRDB.newDocument();
-            document.set("_id", getNextID());
+            //document.set("_id", getNextID());
 
             for (int i = 0; i < countColumnsInData; i++) {
 
                 //System.out.println(columnNamesInSchema.get(i) + " | " + values.get(i)
-                 //+ " | " + valueTypesInSchema.get(i));
+                //        + " | " + valueTypesInSchema.get(i));
 
                 switch (valueTypesInSchema.get(i).toLowerCase()) {
                     case "int":
@@ -235,10 +235,13 @@ public class ImportCSV {
                 }
             }
             //t.insert(document); // Bug?
-            t.insertOrReplace(document);
+            //t.insertOrReplace(document);
+            String ID = getNextID();
+            t.insertOrReplace(ID, document);
+            t.flush();
         } catch (Exception e) {
             e.printStackTrace();
-            //System.exit(-1);
+            System.exit(-1);
         }
     }
 
@@ -249,7 +252,7 @@ public class ImportCSV {
             System.out.println("Inserted " + idcounter + " Documents\n");
 
         //System.out.println("\nDocument ID: " + idcounter);
-        return "" + idcounter;
+        return "ID" + idcounter;
     }
 
 }
