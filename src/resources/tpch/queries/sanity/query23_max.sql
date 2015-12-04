@@ -1,1 +1,1 @@
-select max(O_ORDERDATE) from orders;
+select max(O_ORDERDate) from orders;
