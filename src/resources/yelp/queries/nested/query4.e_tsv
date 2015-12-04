@@ -1,0 +1,20 @@
+ Kurt	user	{"key":"cute","value":1.0}
+ Kurt	user	{"key":"writer","value":1.0}
+'David	user	{"key":"cool","value":1.0}
+'Nancy	user	{"key":"note","value":1.0}
+'Nancy	user	{"key":"cool","value":1.0}
+'Nette	user	{"key":"hot","value":2.0}
+'Peter	user	{"key":"photos","value":1.0}
+'Peter	user	{"key":"plain","value":5.0}
+'Peter	user	{"key":"hot","value":3.0}
+'Peter	user	{"key":"cool","value":1.0}
+'Peter	user	{"key":"profile","value":1.0}
+'Virydiana	user	{"key":"writer","value":1.0}
+'Virydiana	user	{"key":"more","value":1.0}
+'Virydiana	user	{"key":"hot","value":1.0}
+'Virydiana	user	{"key":"plain","value":1.0}
++TheGeneralofHope	user	{"key":"cool","value":2.0}
++TheGeneralofHope	user	{"key":"writer","value":1.0}
++TheGeneralofHope	user	{"key":"photos","value":1.0}
++TheGeneralofHope	user	{"key":"plain","value":2.0}
+- GhettoNinja	user	{"key":"writer","value":1.0}

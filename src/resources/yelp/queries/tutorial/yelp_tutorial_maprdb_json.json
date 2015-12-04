@@ -1,0 +1,21 @@
+{
+    "testId": "yelp_tutorial_maprdb_json",
+    "type": "group",
+    "description": "Test Flatten Queries on Yelp dataset loaded into MapR-DB JSON Tables",
+    "categories": [
+        "smoke"
+    ],
+    "matrices": [
+        {
+            "query-file": ".*.sql",
+            "schema": "mfs.yelp_maprdb",
+            "output-format": "tsv",
+            "expected-file": ".*.e_tsv",
+            "verification-type": [
+                "in-memory"
+            ]
+        }
+    ],
+    "datasources": [
+    ]
+}

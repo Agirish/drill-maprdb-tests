@@ -1,14 +1,14 @@
 {
-    "testId": "tpch_maprdb_json",
+    "testId": "yelp_maprdb_json",
     "type": "group",
-    "description": "Test TPC-H Original Queries on MapR-DB JSON Tables",
+    "description": "Test Flatten Queries on Yelp dataset loaded into MapR-DB JSON Tables",
     "categories": [
         "smoke"
     ],
     "matrices": [
         {
             "query-file": ".*.sql",
-            "schema": "dfs.tpch_sf001_maprdb",
+            "schema": "mfs.yelp_maprdb",
             "output-format": "tsv",
             "expected-file": ".*.e_tsv",
             "verification-type": [
