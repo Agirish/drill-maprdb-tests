@@ -36,6 +36,13 @@
     </repositories>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.mapr.db</groupId>
+            <artifactId>maprdb-mapreduce</artifactId>
+            <version>5.0.9-mapr</version>
+        </dependency>
+
         <dependency>
             <groupId>com.mapr.db</groupId>
             <artifactId>maprdb</artifactId>
@@ -89,4 +96,3 @@
 
 
 </project>
-
